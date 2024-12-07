@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'images/sms.png' %}">
+    <title>QUICKSMS</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/unbounded');
+
+        body {
+            background-color: #7a98ad;
+            color: #fff;
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        body:hover {
+            background-color: #5986b0;
+        }
+
+        .logo {
+            max-width: 110px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: #054865;
+            border: none;
+            border: 2px solid #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 50%;
+            padding: 25px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        label {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .custom-btn {
+            background-color: #206496;
+            color: #dee6f3;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-btn:hover {
+            background-color: #043a51;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .invalid-feedback {
+            display: none;
+            color: #f1ebec;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <script>
+        // Validation function
+        function validateForm(event) {
+            let valid = true;
+
+            const salutation = document.getElementById("salutation");
+            const recipientName = document.getElementById("recipient_name");
+            const messageBody = document.getElementById("message_body");
+            const phoneNumber = document.getElementById("phone_number");
+
+            // Reset previous error messages
+            document.querySelectorAll('.invalid-feedback').forEach(function (message) {
+                message.style.display = 'none';
+            });
+
+            // Check if the fields are filled
+            if (!salutation.value) {
+                document.getElementById("salutation-error").style.display = "block";
+                valid = false;
+            }
+
+            if (!recipientName.value) {
+                document.getElementById("recipient-name-error").style.display = "block";
+                valid = false;
+            }
+
+            if (!messageBody.value) {
+                document.getElementById("message-body-error").style.display = "block";
+                valid = false;
+            }
+
+            if (!phoneNumber.value) {
+                document.getElementById("phone-number-error").style.display = "block";
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        // Trigger validation on input blur (when user leaves the field)
+        document.addEventListener('DOMContentLoaded', function () {
+            const salutation = document.getElementById("salutation");
+            const recipientName = document.getElementById("recipient_name");
+            const messageBody = document.getElementById("message_body");
+            const phoneNumber = document.getElementById("phone_number");
+
+            salutation.addEventListener('blur', function () {
+                if (!salutation.value) {
+                    document.getElementById("salutation-error").style.display = "block";
+                } else {
+                    document.getElementById("salutation-error").style.display = "none";
+                }
+            });
+
+            recipientName.addEventListener('blur', function () {
+                if (!recipientName.value) {
+                    document.getElementById("recipient-name-error").style.display = "block";
+                } else {
+                    document.getElementById("recipient-name-error").style.display = "none";
+                }
+            });
+
+            messageBody.addEventListener('blur', function () {
+                if (!messageBody.value) {
+                    document.getElementById("message-body-error").style.display = "block";
+                } else {
+                    document.getElementById("message-body-error").style.display = "none";
+                }
+            });
+
+            phoneNumber.addEventListener('blur', function () {
+                if (!phoneNumber.value) {
+                    document.getElementById("phone-number-error").style.display = "block";
+                } else {
+                    document.getElementById("phone-number-error").style.display = "none";
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="card">
+        <form method="POST" onsubmit="return validateForm(event)">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="salutation" class="form-label">Greetings</label>
+                <select class="form-control" id="salutation" name="salutation">
+                    <option value="" disabled selected>Select a Greeting</option>
+                    <option value="Good Morning">Good Morning</option>
+                    <option value="Good Afternoon">Good Afternoon</option>
+                    <option value="Good Evening">Good Evening</option>
+                    <option value="Hello">Hello</option>
+                    <option value="Hi">Hi</option>
+                </select>
+                <div class="invalid-feedback" id="salutation-error">
+                    Please select a greeting.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="recipient_name" class="form-label">Recipient's Full Name</label>
+                <input type="text" class="form-control" id="recipient_name" name="recipient_name"
+                    placeholder="e.g., John Doe">
+                <div class="invalid-feedback" id="recipient-name-error">
+                    Please enter the recipient's full name.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="message_body" class="form-label">Message Body</label>
+                <textarea class="form-control" id="message_body" name="message_body" rows="4"
+                    placeholder="Type your message here..."></textarea>
+                <div class="invalid-feedback" id="message-body-error">
+                    Please enter the message body.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="phone_number" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="phone_number" name="phone_number"
+                    placeholder="e.g., +639123456789">
+                <div class="invalid-feedback" id="phone-number-error">
+                    Please enter a phone number.
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="custom-btn w-100">Send SMS</button>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2024 QUICKSMS. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
